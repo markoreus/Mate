@@ -17,6 +17,7 @@
 package com.marko.mate.exp.operation.binop;
 
 import com.marko.mate.exp.Expression;
+import com.marko.mate.exp.operation.Operation;
 import com.marko.mate.exp.operation.unop.Ln;
 import com.marko.mate.exp.symbol.Symbol;
 import com.marko.mate.exp.symbol.Variable;
@@ -47,7 +48,11 @@ public class Pow extends BinaryOperation {
 
     @Override
     public Expression derivate(Variable var) {
-
+        if (exprs.get(1) instanceof Operation) {
+            if (((Operation)exprs.get(1)).contains(var)) {
+                return derivateWithVar(var);
+            }
+        }
         return new Multiplication(
                 exprs.get(1),
                 new Pow(
@@ -68,7 +73,6 @@ public class Pow extends BinaryOperation {
      * @param var
      * @return
      */
-    @SuppressWarnings("unused")
     private Expression derivateWithVar(Variable var) {
         Multiplication mult = new Multiplication();
         mult.addExp(this);
