@@ -17,11 +17,13 @@
 package com.marko.mate.exp.operation.unop;
 
 import com.marko.mate.exp.Expression;
+import com.marko.mate.exp.operation.binop.Multiplication;
 import com.marko.mate.exp.symbol.Symbol;
 import com.marko.mate.exp.symbol.Variable;
 import com.marko.mate.exp.vectorial.Number;
 import com.marko.mate.exp.vectorial.RNumber;
 import com.marko.mate.exp.vectorial.Space;
+import com.marko.mate.exp.vectorial.VectorialSpace;
 import java.util.Map;
 
 /**
@@ -36,7 +38,11 @@ public class Cos extends UnaryOperation {
 
     @Override
     public Expression derivate(Variable var) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new Multiplication(
+                Number.parseNumber("-1"),
+                new Sin(exprs.get(0)),
+                exprs.get(0).derivate(var)
+        ).simplify();
     }
 
     @Override
@@ -54,14 +60,25 @@ public class Cos extends UnaryOperation {
     }
 
     @Override
-    public Space evaluate(Map<Symbol, Space> point) {
-        return new RNumber(
-                Math.cos(
-                        Math.toRadians(
-                                ((Number) exprs.get(0)).evaluate(point).value().doubleValue()
-                        )
-                )
-        );
+    public Expression evaluate(Map<Symbol, Space> point) {
+
+        Expression value = exprs.get(0).evaluate(point);
+
+        if (value instanceof VectorialSpace) {
+            throw new ArithmeticException("Invalid arguments for Cos operation");
+        }
+
+        if (value instanceof Number) {
+            return new RNumber(
+                    Math.cos(
+                            Math.toRadians(
+                                    ((Number) value).value().doubleValue()
+                            )
+                    )
+            );
+        }
+
+        return new Cos(value);
     }
 
     @Override

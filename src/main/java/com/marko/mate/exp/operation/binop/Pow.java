@@ -17,6 +17,7 @@
 package com.marko.mate.exp.operation.binop;
 
 import com.marko.mate.exp.Expression;
+import com.marko.mate.exp.operation.unop.Ln;
 import com.marko.mate.exp.symbol.Symbol;
 import com.marko.mate.exp.symbol.Variable;
 import com.marko.mate.exp.vectorial.RNumber;
@@ -61,18 +62,25 @@ public class Pow extends BinaryOperation {
     }
 
     /**
-     * this method is for the derivation when the pow operation
-     * contains the param var in the exponent
+     * this method is for the derivation when the pow operation contains the
+     * param var in the exponent
+     *
      * @param var
      * @return
      */
     @SuppressWarnings("unused")
-	private Expression derivateWithVar(Variable var) {
+    private Expression derivateWithVar(Variable var) {
         Multiplication mult = new Multiplication();
         mult.addExp(this);
-
+        
         Sum sum = new Sum();
         sum.addExp(new Division(exprs.get(1), var));
+        sum.addExp(
+                new Multiplication(
+                        exprs.get(1).derivate(var),
+                        new Ln(var)
+                )
+        );
         throw new UnsupportedOperationException("Not supported yet");
     }
 
@@ -91,8 +99,8 @@ public class Pow extends BinaryOperation {
     public boolean equals(Object obj) {
         if (obj instanceof Pow) {
             Pow pow = (Pow) obj;
-            return exprs.get(0).equals(pow.exprs.get(0)) && 
-                    exprs.get(1).equals(exprs.get(1));
+            return exprs.get(0).equals(pow.exprs.get(0))
+                    && exprs.get(1).equals(exprs.get(1));
         }
         return false;
     }

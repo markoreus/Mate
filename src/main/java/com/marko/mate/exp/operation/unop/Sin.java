@@ -23,6 +23,7 @@ import com.marko.mate.exp.symbol.Variable;
 import com.marko.mate.exp.vectorial.Space;
 import com.marko.mate.exp.vectorial.Number;
 import com.marko.mate.exp.vectorial.RNumber;
+import com.marko.mate.exp.vectorial.VectorialSpace;
 import java.util.Map;
 
 /**
@@ -40,7 +41,7 @@ public class Sin extends UnaryOperation {
         return new Multiplication(
                 new Cos(exprs.get(0)),
                 exprs.get(0).derivate(var)
-        );
+        ).simplify();
     }
 
     @Override
@@ -58,14 +59,25 @@ public class Sin extends UnaryOperation {
     }
 
     @Override
-    public Space evaluate(Map<Symbol, Space> point) {
-        return new RNumber(
-                Math.sin(
-                        Math.toRadians(
-                                ((Number) exprs.get(0)).evaluate(point).value().doubleValue()
-                        )
-                )
-        );
+    public Expression evaluate(Map<Symbol, Space> point) {
+
+        Expression value = exprs.get(0).evaluate(point);
+
+        if (value instanceof VectorialSpace) {
+            throw new ArithmeticException("Invalid arguments for Cos operation");
+        }
+
+        if (value instanceof Number) {
+            return new RNumber(
+                    Math.sin(
+                            Math.toRadians(
+                                    ((Number) value).value().doubleValue()
+                            )
+                    )
+            );
+        }
+        
+        return new Sin(value);
     }
 
     @Override

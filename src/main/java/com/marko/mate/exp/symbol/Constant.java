@@ -21,7 +21,7 @@ import com.marko.mate.exp.vectorial.RNumber;
 
 /**
  *
- * @author Marcos <your.name at your.org>
+ * @author Marcos
  */
 public class Constant extends Symbol {
 

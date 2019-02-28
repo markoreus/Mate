@@ -24,29 +24,53 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 /**
+ * <p>
+ * This class represents all the arithmetics operations 
  *
  * @author Marcos
  */
 public abstract class Operation implements Expression {
 
+    /**
+     * The list of expressions tha has this operation.
+     */
     protected final LinkedList<Expression> exprs;
 
+    /**
+     * <p>
+     * Constructor that initialize the list of all the expressions and
+     * simplifies
+     *
+     * @param exprs
+     */
     public Operation(Expression... exprs) {
-        LinkedList<Expression> tmp = new LinkedList<>();
+        this.exprs = new LinkedList<>();
         for (Expression exp : exprs) {
-            tmp.add(exp.simplify());
+            this.exprs.add(exp.simplify());
         }
-        this.exprs = tmp;
     }
 
+    /**
+     * <p>
+     * Empty constructor
+     */
     public Operation() {
         exprs = new LinkedList<>();
     }
 
+    /**
+     *
+     * @return LinkedList
+     */
     public LinkedList<Expression> getExpressions() {
         return exprs;
     }
 
+    /**
+     *
+     * @return LinkedList of {@link Variable} containing all the distinct
+     * variables in this operation
+     */
     public LinkedList<Variable> getVars() {
 
         LinkedList<Variable> list = new LinkedList<>();
@@ -67,6 +91,43 @@ public abstract class Operation implements Expression {
         return listReturn;
     }
 
+    private LinkedList<Expression> getExprs() {
+
+        LinkedList<Expression> list = new LinkedList<>();
+
+        exprs.stream().map((exp) -> {
+            if (exp instanceof Operation) {
+                list.addAll(((Operation) exp).getExprs());
+            } else {
+                list.add(exp);
+            }
+            return exp;
+        });
+
+        Stream<Expression> distinct = list.stream().distinct();
+        LinkedList<Expression> listReturn = new LinkedList<>();
+        distinct.forEach(e -> listReturn.add(e));
+
+        return listReturn;
+    }
+
+    /**
+     *
+     * @param exp
+     * @return true if an expression is contained in this operation, false
+     * otherwise
+     */
+    public boolean contains(Expression exp) {
+        return getExprs().contains(exp);
+    }
+
+    /**
+     * <p>
+     * The gradient of an operation is the first derivative with respect to all
+     * the variables in this operation
+     *
+     * @return {@link Vector} that contains all derivatives separately
+     */
     public Vector gradient() {
 
         LinkedList<Variable> list = getVars();
@@ -80,6 +141,13 @@ public abstract class Operation implements Expression {
         return new Vector(expArr);
     }
 
+    /**
+     * <p>
+     * The hessian matrix of an operation of n variables,
+     * is the square matrix of n × n, of the second partial derivatives
+     * 
+     * @return {@link Matrix}
+     */
     public Matrix hessian() {
 
         LinkedList<Variable> list = getVars();
@@ -94,7 +162,7 @@ public abstract class Operation implements Expression {
             i++;
             j = 0;
         }
-        
+
         return new Matrix(data);
     }
 
