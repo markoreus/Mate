@@ -33,23 +33,41 @@ import java.util.Objects;
  * @author Marcos
  */
 public class Pow extends BinaryOperation {
-
+    
+    /**
+     * BigDecimal used in the simplify method to decide the maximum value to
+     * simplify in case they are numerical expressions 
+     */
     private final BigDecimal MAX_VALUE_SIMPLIFY = new BigDecimal("10");
 
     public Pow(Expression base, Expression exponent) {
         super(new Expression[]{base, exponent});
     }
 
+    /**
+     * Evaluates this pow operation.
+     * @param point
+     * @return {@link Space} if all the symbols are evaluated,
+     * {@link Expression} otherwise.
+     */
     @Override
     public Expression evaluate(Map<Symbol, Space> point) {
         return (exprs.get(0).evaluate(point)).pow(
                 (exprs.get(1).evaluate(point)).simplify());
     }
-
+    
+    /**
+     * <p>
+     * Derivates a pow operation in an analitical way. When the exponent has
+     * the variable var this throw an UnsupportedOperationException.
+     * 
+     * @param var
+     * @return {@link Expression}
+     */
     @Override
     public Expression derivate(Variable var) {
         if (exprs.get(1) instanceof Operation) {
-            if (((Operation)exprs.get(1)).contains(var)) {
+            if (((Operation) exprs.get(1)).contains(var)) {
                 return derivateWithVar(var);
             }
         }
@@ -67,6 +85,7 @@ public class Pow extends BinaryOperation {
     }
 
     /**
+     * <p>
      * this method is for the derivation when the pow operation contains the
      * param var in the exponent
      *
@@ -76,7 +95,7 @@ public class Pow extends BinaryOperation {
     private Expression derivateWithVar(Variable var) {
         Multiplication mult = new Multiplication();
         mult.addExp(this);
-        
+
         Sum sum = new Sum();
         sum.addExp(new Division(exprs.get(1), var));
         sum.addExp(
@@ -88,6 +107,10 @@ public class Pow extends BinaryOperation {
         throw new UnsupportedOperationException("Not supported yet");
     }
 
+    /**
+     * 
+     * @return true only if the base is zero, false otherwise. 
+     */
     @Override
     public boolean isZero() {
         return exprs.get(0).isZero();
@@ -99,10 +122,22 @@ public class Pow extends BinaryOperation {
                 + ")^(" + exprs.get(1).toString() + ")";
     }
 
+    /**
+     * <p>
+     * Evalutes both pow operations and compare the result. If the result is
+     * different then, it compares the base and the exponent separately.
+     * 
+     * @param obj
+     * @return true if equals, false otherwise.
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Pow) {
             Pow pow = (Pow) obj;
+            if (pow.evaluate(null).equals(evaluate(null))) {
+                return true;
+            }
+
             return exprs.get(0).equals(pow.exprs.get(0))
                     && exprs.get(1).equals(exprs.get(1));
         }
@@ -116,6 +151,12 @@ public class Pow extends BinaryOperation {
         return hash;
     }
 
+    /**
+     * It simplifies this pow operation.This operation only takes effect
+     * when the base or the exponent is an instance of Number
+     * 
+     * @return {@link Expression} 
+     */
     @Override
     public Expression simplify() {
         Expression base = exprs.get(0).simplify(),
