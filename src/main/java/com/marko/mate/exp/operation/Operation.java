@@ -25,14 +25,14 @@ import java.util.stream.Stream;
 
 /**
  * <p>
- * This class represents all the arithmetics operations 
+ * This class represents all the arithmetics operations
  *
  * @author Marcos
  */
 public abstract class Operation implements Expression {
 
     /**
-     * The list of expressions tha has this operation.
+     * The list of expressions that has this operation.
      */
     protected final LinkedList<Expression> exprs;
 
@@ -51,8 +51,8 @@ public abstract class Operation implements Expression {
     }
 
     /**
-     * <p>
-     * Empty constructor
+     *
+     * Empty constructor that initialize the LinkedList
      */
     public Operation() {
         exprs = new LinkedList<>();
@@ -143,9 +143,9 @@ public abstract class Operation implements Expression {
 
     /**
      * <p>
-     * The hessian matrix of an operation of n variables,
-     * is the square matrix of n × n, of the second partial derivatives
-     * 
+     * The hessian matrix of an operation of n variables, is the square matrix
+     * of n × n, of the second partial derivatives
+     *
      * @return {@link Matrix}
      */
     public Matrix hessian() {

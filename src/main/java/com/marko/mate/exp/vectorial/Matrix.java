@@ -113,25 +113,25 @@ public class Matrix extends VectorialSpace {
 
     @Override
     public VectorialSpace multiply(Expression exp) {
-    	
-    	if(exp instanceof Space) {
-    		return multiply((Space) exp);
-    	}
-    	
-    	Expression[][] newData = new Expression[data.length][data[0].length];
-    	for (int i = 0; i < data.length; i++) {
-			for(int j = 0; i < data.length; j++) {
-				newData[i][j] = new Multiplication(
-							data[i][j],
-							exp
-						).simplify();
-			}
-		}
-    	
-    	return new Matrix(newData);
-    
+
+        if (exp instanceof Space) {
+            return multiply((Space) exp);
+        }
+
+        Expression[][] newData = new Expression[data.length][data[0].length];
+        for (int i = 0; i < data.length; i++) {
+            for (int j = 0; i < data.length; j++) {
+                newData[i][j] = new Multiplication(
+                        data[i][j],
+                        exp
+                ).simplify();
+            }
+        }
+
+        return new Matrix(newData);
+
     }
-    
+
     private VectorialSpace multiply(Space space) {
 
         if (space instanceof Number) {
@@ -144,25 +144,25 @@ public class Matrix extends VectorialSpace {
 
         return multiply((Matrix) space);
     }
-    
+
     @Override
     public Matrix add(Expression exp) {
-    	
-    	if(exp instanceof Space) {
-    		return add((Space) exp);
-    	}
-    	
-    	Expression[][] newData = new Expression[data.length][data[0].length];
-    	for (int i = 0; i < data.length; i++) {
-			for(int j = 0; i < data.length; j++) {
-				newData[i][j] = new Sum(
-							data[i][j],
-							exp
-						).simplify();
-			}
-		}
-    	
-    	return new Matrix(newData);
+
+        if (exp instanceof Space) {
+            return add((Space) exp);
+        }
+
+        Expression[][] newData = new Expression[data.length][data[0].length];
+        for (int i = 0; i < data.length; i++) {
+            for (int j = 0; i < data.length; j++) {
+                newData[i][j] = new Sum(
+                        data[i][j],
+                        exp
+                ).simplify();
+            }
+        }
+
+        return new Matrix(newData);
     }
 
     private Matrix add(Space space) {
@@ -177,15 +177,15 @@ public class Matrix extends VectorialSpace {
 
         return add((Matrix) space);
     }
-    
+
     @Override
     public Matrix substract(Expression exp) {
-    	
-    	if(exp instanceof Space) {
-    		return substract((Space)exp);
-    	}
-    
-    	Expression[][] newData = new Expression[data.length][data[0].length];
+
+        if (exp instanceof Space) {
+            return substract((Space) exp);
+        }
+
+        Expression[][] newData = new Expression[data.length][data[0].length];
         int i = 0, j = 0;
 
         for (Expression[] expArr : data) {
@@ -203,7 +203,7 @@ public class Matrix extends VectorialSpace {
         }
 
         return new Matrix(newData);
-    	
+
     }
 
     private Matrix substract(Space space) {
@@ -557,28 +557,28 @@ public class Matrix extends VectorialSpace {
 
     @Override
     public Expression divide(Expression exp) {
-    	
-    	if(exp instanceof Space) {
-    		return divide((Space)exp);
-    	}
-    	
-    	 Expression[][] newData = new Expression[data.length][data[0].length];
-         int i = 0, j = 0;
 
-         for (Expression[] expArr : data) {
-             for (var var : expArr) {
-                 newData[i][j++] = new Division(
-                		 	var,exp
-                		 ).simplify();
-             }
-             i++;
-             j = 0;
-         }
+        if (exp instanceof Space) {
+            return divide((Space) exp);
+        }
 
-         return new Matrix(newData);
-    	
+        Expression[][] newData = new Expression[data.length][data[0].length];
+        int i = 0, j = 0;
+
+        for (Expression[] expArr : data) {
+            for (var var : expArr) {
+                newData[i][j++] = new Division(
+                        var, exp
+                ).simplify();
+            }
+            i++;
+            j = 0;
+        }
+
+        return new Matrix(newData);
+
     }
-    
+
     private Matrix divide(Space space) {
         if (space == null) {
             throw new NullPointerException();
@@ -587,8 +587,8 @@ public class Matrix extends VectorialSpace {
         if (space instanceof Matrix) {
             return multiply(((Matrix) space).inverse());
         }
-        if(space instanceof Number) {
-        	return multiply(((Number)space).inverse());
+        if (space instanceof Number) {
+            return multiply(((Number) space).inverse());
         }
         throw new ArithmeticException("Invalid division Matrix with " + space.getClass().getSimpleName());
     }
